@@ -1,15 +1,15 @@
 import time
 import matplotlib.pyplot as plt
 
-class TablaHash:
+class TablaHash: # Implementación de una tabla hash propia
     def __init__(self, tamano=1000):
         self.tamano = tamano
         self.tabla = []
-        for _ in range(tamano):
+        for _ in range(tamano): # Crea las cubetas vacías de la tabla hash
             self.tabla.append([])
 
-    def funcion_hash(self, palabra):
-        suma = 0
+    def funcion_hash(self, palabra): 
+        suma = 0 # Calcula la posición hash sumando los códigos ASCII
         for letra in palabra:
             suma += ord(letra)
         return suma % self.tamano
@@ -18,7 +18,7 @@ class TablaHash:
         indice = self.funcion_hash(palabra)
         cubeta = self.tabla[indice]
 
-        for elemento in cubeta:
+        for elemento in cubeta:   # Evita duplicar líneas para una misma palabra
             if elemento[0] == palabra:
                 if linea not in elemento[1]:
                     elemento[1].append(linea)
@@ -26,18 +26,16 @@ class TablaHash:
 
         cubeta.append([palabra, [linea]])
 
-    def buscar(self, palabra):
+    def buscar(self, palabra):   # Busca la palabra dentro de la cubeta correspondiente
         indice = self.funcion_hash(palabra)
         cubeta = self.tabla[indice]
-
         for elemento in cubeta:
             if elemento[0] == palabra:
                 return elemento[1]
-
         return []
 
 
-def cargar_texto(nombre_archivo):
+def cargar_texto(nombre_archivo): # Carga el archivo de texto en memoria
     with open(nombre_archivo, "r", encoding="utf-8") as archivo:
         return archivo.readlines()
 
