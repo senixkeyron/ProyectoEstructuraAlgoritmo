@@ -46,9 +46,7 @@ def busqueda_fuerza_bruta(lineas, patron):
         linea = lineas[i].lower()
         if patron in linea:
             ocurrencias.append(i + 1)
-
     return ocurrencias
-
 
 def crear_indice_diccionario(lineas):
     indice = {}
@@ -64,7 +62,6 @@ def crear_indice_diccionario(lineas):
                     indice[palabra].append(i + 1)
     return indice
 
-
 def crear_indice_hash(lineas):
     tabla = TablaHash()
     for i in range(len(lineas)):
@@ -77,16 +74,13 @@ def crear_indice_hash(lineas):
                 tabla.insertar(palabra, i + 1)
     return tabla
 
-
 def buscar_diccionario(indice, patron):
     patron = limpiar_palabra(patron)
     return indice.get(patron, [])
 
-
 def buscar_hash(tabla, patron):
     patron = limpiar_palabra(patron)
     return tabla.buscar(patron)
-
 
 def medir_tiempo_busqueda(funcion, repeticiones):
     inicio = time.time()
@@ -97,7 +91,6 @@ def medir_tiempo_busqueda(funcion, repeticiones):
     tiempo_total = fin - inicio
     tiempo_promedio = tiempo_total / repeticiones
     return tiempo_total, tiempo_promedio
-
 
 def ejecutar_consultas_archivo(nombre_archivo, lineas, indice_diccionario, indice_hash):
     with open(nombre_archivo, "r", encoding="utf-8") as archivo:
@@ -252,5 +245,5 @@ def menu():
             break
 
         else:
-            print("Opción inválida.")
+            print("Opcinn invalida.")
 menu()
