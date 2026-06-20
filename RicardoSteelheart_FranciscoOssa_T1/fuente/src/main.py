@@ -34,18 +34,16 @@ class TablaHash: # Implementación de una tabla hash propia
                 return elemento[1]
         return []
 
-
 def cargar_texto(nombre_archivo): # Carga el archivo de texto en memoria
     with open(nombre_archivo, "r", encoding="utf-8") as archivo:
         return archivo.readlines()
 
 
-def limpiar_palabra(palabra):
+def limpiar_palabra(palabra): # Elimina signos de puntuación y normaliza a minúsculas
     signos = ".,;:!?()[]{}\"'¿¡\n\t"
     return palabra.strip(signos).lower()
 
-
-def busqueda_fuerza_bruta(lineas, patron):
+def busqueda_fuerza_bruta(lineas, patron): # Busqueda secuencial recorriendo todas las líneas
     ocurrencias = []
     patron = patron.lower()
 
@@ -53,11 +51,9 @@ def busqueda_fuerza_bruta(lineas, patron):
         linea = lineas[i].lower()
         if patron in linea:
             ocurrencias.append(i + 1)
-
     return ocurrencias
 
-
-def crear_indice_diccionario(lineas):
+def crear_indice_diccionario(lineas):# Construye un índice utilizando un diccionario de Python
     indice = {}
 
     for i in range(len(lineas)):
@@ -72,13 +68,11 @@ def crear_indice_diccionario(lineas):
 
                 if (i + 1) not in indice[palabra]:
                     indice[palabra].append(i + 1)
-
     return indice
 
 
-def crear_indice_hash(lineas):
+def crear_indice_hash(lineas):# Construye un índice utilizando la tabla hash propia
     tabla = TablaHash()
-
     for i in range(len(lineas)):
         palabras = lineas[i].split()
 
