@@ -8,20 +8,14 @@ from busqueda import (
     buscar_hash
 )
 
-
 def medir_tiempo_busqueda(funcion, repeticiones):
     inicio = time.time()
-
     for _ in range(repeticiones):
         funcion()
-
     fin = time.time()
-
     tiempo_total = fin - inicio
     tiempo_promedio = tiempo_total / repeticiones
-
     return tiempo_total, tiempo_promedio
-
 
 def ejecutar_consultas_archivo(nombre_archivo, lineas, indice_diccionario, indice_hash):
     with open(nombre_archivo, "r", encoding="utf-8") as archivo:
@@ -43,7 +37,7 @@ def menu():
     indice_hash = None
 
     while True:
-        print("\n===== MENÚ PRINCIPAL =====")
+        print("\n===== MENU PRINCIPAL =====")
         print("1. Cargar archivo de texto")
         print("2. Buscar por fuerza bruta")
         print("3. Crear índice con diccionario de Python")
