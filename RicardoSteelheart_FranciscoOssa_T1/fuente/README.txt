@@ -1,16 +1,13 @@
 Proyecto Estructuras de Datos y Algoritmos
 
 Integrantes:
-- Nombre Apellido
-- Nombre Apellido
+- Ricardo Steelheart
+- Francisco Ossa
 
-Lenguaje:
-Python 3
-
-Ejecución:
+Esta escrito en python 
+Ejecutar:
 
 ./EXECUTE
-
 o
 
 python3 src/main.py
