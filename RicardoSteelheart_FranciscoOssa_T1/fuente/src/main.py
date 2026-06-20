@@ -1,29 +1,109 @@
 import time
-from utilidades import cargar_texto
-from busqueda import (
-    busqueda_fuerza_bruta,
-    crear_indice_diccionario,
-    crear_indice_hash,
-    buscar_diccionario,
-    buscar_hash
-)
+
+class TablaHash:
+    def __init__(self, tamano=1000):
+        self.tamano = tamano
+        self.tabla = []
+        for _ in range(tamano):
+            self.tabla.append([])
+
+    def funcion_hash(self, palabra):
+        suma = 0
+        for letra in palabra:
+            suma += ord(letra)
+        return suma % self.tamano
+
+    def insertar(self, palabra, linea):
+        indice = self.funcion_hash(palabra)
+        cubeta = self.tabla[indice]
+        for elemento in cubeta:
+            if elemento[0] == palabra:
+                if linea not in elemento[1]:
+                    elemento[1].append(linea)
+                return
+        cubeta.append([palabra, [linea]])
+
+    def buscar(self, palabra):
+        indice = self.funcion_hash(palabra)
+        cubeta = self.tabla[indice]
+        for elemento in cubeta:
+            if elemento[0] == palabra:
+                return elemento[1]
+        return []
+
+def cargar_texto(nombre_archivo):
+    with open(nombre_archivo, "r", encoding="utf-8") as archivo:
+        return archivo.readlines()
+
+def limpiar_palabra(palabra):
+    signos = ".,;:!?()[]{}\"'¿¡\n\t"
+    return palabra.strip(signos).lower()
+
+def busqueda_fuerza_bruta(lineas, patron):
+    ocurrencias = []
+    patron = patron.lower()
+    for i in range(len(lineas)):
+        linea = lineas[i].lower()
+        if patron in linea:
+            ocurrencias.append(i + 1)
+
+    return ocurrencias
+
+
+def crear_indice_diccionario(lineas):
+    indice = {}
+    for i in range(len(lineas)):
+        palabras = lineas[i].split()
+        for palabra in palabras:
+            palabra = limpiar_palabra(palabra)
+
+            if palabra != "":
+                if palabra not in indice:
+                    indice[palabra] = []
+                if (i + 1) not in indice[palabra]:
+                    indice[palabra].append(i + 1)
+    return indice
+
+
+def crear_indice_hash(lineas):
+    tabla = TablaHash()
+    for i in range(len(lineas)):
+        palabras = lineas[i].split()
+
+        for palabra in palabras:
+            palabra = limpiar_palabra(palabra)
+
+            if palabra != "":
+                tabla.insertar(palabra, i + 1)
+    return tabla
+
+
+def buscar_diccionario(indice, patron):
+    patron = limpiar_palabra(patron)
+    return indice.get(patron, [])
+
+
+def buscar_hash(tabla, patron):
+    patron = limpiar_palabra(patron)
+    return tabla.buscar(patron)
+
 
 def medir_tiempo_busqueda(funcion, repeticiones):
     inicio = time.time()
     for _ in range(repeticiones):
         funcion()
+
     fin = time.time()
     tiempo_total = fin - inicio
     tiempo_promedio = tiempo_total / repeticiones
     return tiempo_total, tiempo_promedio
 
+
 def ejecutar_consultas_archivo(nombre_archivo, lineas, indice_diccionario, indice_hash):
     with open(nombre_archivo, "r", encoding="utf-8") as archivo:
         consultas = archivo.readlines()
-
     for consulta in consultas:
         patron = consulta.strip()
-
         if patron != "":
             print("\nPatrón:", patron)
             print("Fuerza bruta:", busqueda_fuerza_bruta(lineas, patron))
@@ -35,7 +115,6 @@ def menu():
     lineas = []
     indice_diccionario = None
     indice_hash = None
-
     while True:
         print("\n===== MENU PRINCIPAL =====")
         print("1. Cargar archivo de texto")
@@ -47,9 +126,8 @@ def menu():
         print("7. Ejecutar consultas desde archivo")
         print("8. Medir tiempos")
         print("0. Salir")
-
         opcion = input("Seleccione una opción: ")
-
+        
         if opcion == "1":
             nombre = input("Ingrese nombre del archivo: ")
 
@@ -139,32 +217,35 @@ def menu():
                 patron = input("Ingrese patrón para medir: ")
                 repeticiones = int(input("Ingrese cantidad de repeticiones: "))
 
-                if indice_diccionario is None:
-                    indice_diccionario = crear_indice_diccionario(lineas)
+                if repeticiones <= 0:
+                    print("La cantidad de repeticiones debe ser mayor que 0.")
+                else:
+                    if indice_diccionario is None:
+                        indice_diccionario = crear_indice_diccionario(lineas)
 
-                if indice_hash is None:
-                    indice_hash = crear_indice_hash(lineas)
+                    if indice_hash is None:
+                        indice_hash = crear_indice_hash(lineas)
 
-                total_fb, promedio_fb = medir_tiempo_busqueda(
-                    lambda: busqueda_fuerza_bruta(lineas, patron),
-                    repeticiones
-                )
+                    total_fb, promedio_fb = medir_tiempo_busqueda(
+                        lambda: busqueda_fuerza_bruta(lineas, patron),
+                        repeticiones
+                    )
 
-                total_dic, promedio_dic = medir_tiempo_busqueda(
-                    lambda: buscar_diccionario(indice_diccionario, patron),
-                    repeticiones
-                )
+                    total_dic, promedio_dic = medir_tiempo_busqueda(
+                        lambda: buscar_diccionario(indice_diccionario, patron),
+                        repeticiones
+                    )
 
-                total_hash, promedio_hash = medir_tiempo_busqueda(
-                    lambda: buscar_hash(indice_hash, patron),
-                    repeticiones
-                )
+                    total_hash, promedio_hash = medir_tiempo_busqueda(
+                        lambda: buscar_hash(indice_hash, patron),
+                        repeticiones
+                    )
 
-                print("\n===== RESULTADOS =====")
-                print("Método                 Tiempo total        Tiempo promedio")
-                print("Fuerza bruta           ", total_fb, "     ", promedio_fb)
-                print("Diccionario Python     ", total_dic, "     ", promedio_dic)
-                print("Tabla Hash propia      ", total_hash, "     ", promedio_hash)
+                    print("\n===== RESULTADOS =====")
+                    print("Método                 Tiempo total        Tiempo promedio")
+                    print("Fuerza bruta           ", total_fb, "     ", promedio_fb)
+                    print("Diccionario Python     ", total_dic, "     ", promedio_dic)
+                    print("Tabla Hash propia      ", total_hash, "     ", promedio_hash)
 
         elif opcion == "0":
             print("Programa finalizado.")
@@ -172,7 +253,4 @@ def menu():
 
         else:
             print("Opción inválida.")
-
-
-if __name__ == "__main__":
-    menu()
+menu()
